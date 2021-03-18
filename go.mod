@@ -1,4 +1,4 @@
-module go-testclient
+module testclient
 
 go 1.15
 
