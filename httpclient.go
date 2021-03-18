@@ -1,4 +1,4 @@
-package httpclient
+package testclient
 
 import (
 	"bytes"
@@ -11,23 +11,16 @@ import (
 
 // Client provides an instance of the RequestDoer interface
 type Client struct {
-	RequestDoer RequestDoer
+	*http.Client
 }
 
-func NewClient() *Client {
+func NewClient(rt http.RoundTripper) *Client {
 	return &Client{
-		RequestDoer: &http.Client{
-			Transport: http.DefaultTransport,
+		Client: &http.Client{
+			Transport: rt,
 		},
 	}
 }
-
-// SetTransport allows setting a RoundTripper
-// as httpclient.Transport before GET or POST
-func (c *Client) SetTransport(t http.RoundTripper) {
-	c.RequestDoer.(*http.Client).Transport = t
-}
-
 
 // Get sends a post request to the URL with provided headers.
 func (c *Client) Get(url string, headers http.Header) (resp *http.Response, req *http.Request, err error) {
@@ -40,28 +33,29 @@ func (c *Client) Post(url string, body interface{}, headers http.Header) (resp *
 	for range only.Once {
 
 		var scheme string
-		scheme,err = getURLScheme(url)
+		scheme, err = getURLScheme(url)
 		if err != nil {
 			break
 		}
 
 		jsonBytes, err = json.Marshal(body)
 		if err != nil {
- 			err = fmt.Errorf("unable to marshal JSON body for %s POST request", scheme )
+			err = fmt.Errorf("unable to marshal JSON body for %s POST request", scheme)
 			break
 		}
 
 		resp, req, err = c.do(http.MethodPost, url, headers, bytes.NewReader(jsonBytes))
 
 	}
-	return resp, req,err
+	return resp, req, err
 }
 
 // do calls on http client to do an HTTP(S) request
+//goland:noinspection GoUnusedParameter
 func (c *Client) do(method, url string, headers http.Header, body interface{}) (resp *http.Response, req *http.Request, err error) {
 	for range only.Once {
-
-		scheme,err := getURLScheme(url)
+		var scheme string
+		scheme, err = getURLScheme(url)
 		if err != nil {
 			break
 		}
@@ -76,11 +70,12 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 		}
 
 		req.Header = headers
-		resp, err = c.RequestDoer.Do(req)
+		resp, err = c.Do(req)
 		if err != nil {
-			err = fmt.Errorf("unable to perform an %s %s request",
+			err = fmt.Errorf("unable to perform %s %s request: %s",
 				scheme,
 				method,
+				err,
 			)
 		}
 
@@ -100,5 +95,5 @@ func getURLScheme(u string) (s string, err error) {
 		}
 		s = uo.Scheme
 	}
-	return s,err
+	return s, err
 }

@@ -1,4 +1,4 @@
-module httpclient
+module go-testclient
 
 go 1.15
 
