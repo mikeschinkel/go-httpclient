@@ -1,4 +1,4 @@
-module testclient
+module github.com/mikeschinkel/go-testclient
 
 go 1.15
 
