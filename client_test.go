@@ -68,7 +68,7 @@ func TestMockTransportGet(t *testing.T) {
 			TestNum:          testNum,
 			ValidateBodyFunc: reposFunc,
 		})
-		_, err := tc.TestJSONGet(NewClient(&MockTransport{
+		_, err := tc.TestJSONGet(NewClientWithTransport(&MockTransport{
 			ExpectedResponse: er,
 		}))
 		if err != nil {

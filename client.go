@@ -14,7 +14,11 @@ type Client struct {
 	*http.Client
 }
 
-func NewClient(rt http.RoundTripper) *Client {
+func NewClient() *Client {
+	return NewClientWithTransport(http.DefaultTransport)
+}
+
+func NewClientWithTransport(rt http.RoundTripper) *Client {
 	return &Client{
 		Client: &http.Client{
 			Transport: rt,

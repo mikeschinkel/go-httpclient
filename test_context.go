@@ -73,7 +73,7 @@ func (tc *TestContext) RefreshJSONFixture() {
 	for range only.Once {
 
 		rt := NewRefreshTransport(tc.ExpectedResponse)
-		client := NewClient(rt)
+		client := NewClientWithTransport(rt)
 		response, err := tc.TestJSONGet(client)
 		if err != nil {
 			tc.Error("Failed to HTTP GET", err)
