@@ -27,12 +27,12 @@ func NewClientWithTransport(rt http.RoundTripper) *Client {
 }
 
 // Get sends a post request to the URL with provided headers.
-func (c *Client) Get(url string, headers http.Header) (resp *http.Response, req *http.Request, err error) {
+func (c *Client) Get(url string, headers http.Header) (resp *http.Response, err error) {
 	return c.do(http.MethodGet, url, headers, nil)
 }
 
 // Post sends a post request to the URL with the body with provided headers
-func (c *Client) Post(url string, body interface{}, headers http.Header) (resp *http.Response, req *http.Request, err error) {
+func (c *Client) Post(url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
 	var jsonBytes []byte
 	for range only.Once {
 
@@ -48,15 +48,15 @@ func (c *Client) Post(url string, body interface{}, headers http.Header) (resp *
 			break
 		}
 
-		resp, req, err = c.do(http.MethodPost, url, headers, bytes.NewReader(jsonBytes))
+		resp, err = c.do(http.MethodPost, url, headers, bytes.NewReader(jsonBytes))
 
 	}
-	return resp, req, err
+	return resp, err
 }
 
 // do calls on http client to do an HTTP(S) request
 //goland:noinspection GoUnusedParameter
-func (c *Client) do(method, url string, headers http.Header, body interface{}) (resp *http.Response, req *http.Request, err error) {
+func (c *Client) do(method, url string, headers http.Header, body interface{}) (resp *http.Response, err error) {
 	for range only.Once {
 		var scheme string
 		scheme, err = getURLScheme(url)
@@ -64,6 +64,7 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 			break
 		}
 
+		var req *http.Request
 		req, err = http.NewRequest(method, url, nil)
 		if err != nil {
 			err = fmt.Errorf("unable to instantiate %s %s request",
@@ -84,7 +85,7 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 		}
 
 	}
-	return resp, req, err
+	return resp, err
 }
 
 // getURLScheme returns the scheme from a URL

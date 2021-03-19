@@ -125,7 +125,7 @@ func (tc *TestContext) TestJSONGet(client *Client) (resp *ExpectedResponse, err 
 		testURL := tc.ExpectedResponse.URL
 		tc.Run(fmt.Sprintf("Get_URL_via_HTTP[%s]", testURL), func(t *testing.T) {
 			for range only.Once {
-				hr, _, err = client.Get(testURL, nil)
+				hr, err = client.Get(testURL, nil)
 				if ignoreConnectionRefused(tc, err) {
 					err = nil
 					break
