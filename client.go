@@ -26,13 +26,28 @@ func NewClientWithTransport(rt http.RoundTripper) *Client {
 	}
 }
 
-// Get sends a post request to the URL with provided headers.
+// Get sends an HTTP(S) GET request to the URL with provided headers.
 func (c *Client) Get(url string, headers http.Header) (resp *http.Response, err error) {
 	return c.do(http.MethodGet, url, headers, nil)
 }
 
-// Post sends a post request to the URL with the body with provided headers
+// Put sends an an HTTP(S) PUT to the URL with the body with provided headers
+func (c *Client) Put(url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
+	return c.requestWithBody(http.MethodPut, url, body, headers)
+}
+
+// Post sends an HTTP(S) POST request to the URL with the body and provided headers
 func (c *Client) Post(url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
+	return c.requestWithBody(http.MethodPost, url, body, headers)
+}
+
+// Get sends an HTTP(S) DELETE request to the URL with provided headers.
+func (c *Client) Delete(url string, headers http.Header) (resp *http.Response, err error) {
+	return c.do(http.MethodDelete, url, headers, nil)
+}
+
+// requestWithBody sends either an HTTP(S) POST or PUT request to the URL with the body and provided headers
+func (c *Client) requestWithBody(method, url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
 	var jsonBytes []byte
 	for range only.Once {
 
@@ -48,7 +63,7 @@ func (c *Client) Post(url string, body interface{}, headers http.Header) (resp *
 			break
 		}
 
-		resp, err = c.do(http.MethodPost, url, headers, bytes.NewReader(jsonBytes))
+		resp, err = c.do(method, url, headers, bytes.NewReader(jsonBytes))
 
 	}
 	return resp, err
