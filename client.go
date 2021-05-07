@@ -26,23 +26,23 @@ func NewClientWithTransport(rt http.RoundTripper) *Client {
 	}
 }
 
-// Get sends an HTTP(S) GET request to the URL with provided headers.
-func (c *Client) Get(url string, headers http.Header) (resp *http.Response, err error) {
+// GET sends an HTTP(S) GET request to the URL with provided headers.
+func (c *Client) GET(url string, headers http.Header) (resp *http.Response, err error) {
 	return c.do(http.MethodGet, url, headers, nil)
 }
 
-// Put sends an an HTTP(S) PUT to the URL with the body with provided headers
-func (c *Client) Put(url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
+// PUT sends an an HTTP(S) PUT to the URL with the body with provided headers
+func (c *Client) PUT(url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
 	return c.requestWithBody(http.MethodPut, url, body, headers)
 }
 
-// Post sends an HTTP(S) POST request to the URL with the body and provided headers
-func (c *Client) Post(url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
+// POST sends an HTTP(S) POST request to the URL with the body and provided headers
+func (c *Client) POST(url string, body interface{}, headers http.Header) (resp *http.Response, err error) {
 	return c.requestWithBody(http.MethodPost, url, body, headers)
 }
 
-// Get sends an HTTP(S) DELETE request to the URL with provided headers.
-func (c *Client) Delete(url string, headers http.Header) (resp *http.Response, err error) {
+// DELETE sends an HTTP(S) DELETE request to the URL with provided headers.
+func (c *Client) DELETE(url string, headers http.Header) (resp *http.Response, err error) {
 	return c.do(http.MethodDelete, url, headers, nil)
 }
 
