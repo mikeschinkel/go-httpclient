@@ -85,6 +85,7 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 		goto end
 	}
 
+	req.Close = true // Avoid failed calls that send EOF
 	req.Header = headers
 	resp, err = c.Do(req)
 	if err != nil {
