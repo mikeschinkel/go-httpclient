@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 // Client provides an instance of the RequestDoer interface
@@ -21,6 +22,7 @@ func NewClientWithTransport(rt http.RoundTripper) *Client {
 	return &Client{
 		Client: &http.Client{
 			Transport: rt,
+			Timeout:   3 * time.Second, // Most testing should fail quickly.
 		},
 	}
 }
