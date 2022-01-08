@@ -1,4 +1,2 @@
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/mikeschinkel/go-only v1.0.1 h1:wEVuj9cyrcNwpgdtm5oPVpAJNJHJ/aRJ7FjVoXgcnCk=
-github.com/mikeschinkel/go-only v1.0.1/go.mod h1:JotT1qcmGHssOhsQcLWYQ1780HWuTz8RfY3iUNqCkjc=

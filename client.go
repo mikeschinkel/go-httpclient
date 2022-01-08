@@ -9,9 +9,13 @@ import (
 	"time"
 )
 
+// DefaultTimeout is short so testing fails quickly
+const DefaultTimeout = 3 // Seconds
+
 // Client provides an instance of the RequestDoer interface
 type Client struct {
 	*http.Client
+	Logger Logger
 }
 
 func NewClient() *Client {
@@ -19,11 +23,24 @@ func NewClient() *Client {
 }
 
 func NewClientWithTransport(rt http.RoundTripper) *Client {
+	c := defaultHttpClient()
+	c.Transport = rt
 	return &Client{
-		Client: &http.Client{
-			Transport: rt,
-			Timeout:   3 * time.Second, // Most testing should fail quickly.
-		},
+		Logger: DefaultLogger(),
+		Client: c,
+	}
+}
+
+func NewClientWithLogger(l Logger) *Client {
+	return &Client{
+		Logger: l,
+		Client: defaultHttpClient(),
+	}
+}
+
+func defaultHttpClient() *http.Client {
+	return &http.Client{
+		Timeout: DefaultTimeout * time.Second,
 	}
 }
 
@@ -68,6 +85,9 @@ end:
 func (c *Client) do(method, url string, headers http.Header, body interface{}) (resp *http.Response, err error) {
 	var scheme string
 	var req *http.Request
+	logger := c.Logger
+	youarehere := "[testclient.do()]"
+	logger.Logf("DEBUG: %s Requesting %s %s", youarehere, method, url)
 
 	scheme, err = getURLScheme(url)
 	if err != nil {
@@ -77,6 +97,7 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 			err)
 		goto end
 	}
+	logger.Logf("DEBUG: %s Scheme is %s", youarehere, scheme)
 
 	req, err = http.NewRequest(method, url, nil)
 	if err != nil {
@@ -86,9 +107,12 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 			err)
 		goto end
 	}
+	logger.Logf("DEBUG: %s Request is %#v", youarehere, req)
 
 	req.Close = true // Avoid failed calls that send EOF
 	req.Header = headers
+
+	logger.Logf("DEBUG: %s Headers are %#v", headers)
 	resp, err = c.Do(req)
 	if err != nil {
 		err = fmt.Errorf("unable to perform %s %s request: %s",
@@ -97,8 +121,12 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 			err,
 		)
 	}
+	logger.Logf("DEBUG: %s Response is %#v", youarehere, resp)
 
 end:
+	if err != nil {
+		logger.Logf("ERROR: %s %s", youarehere, err.Error())
+	}
 	return resp, err
 }
 
