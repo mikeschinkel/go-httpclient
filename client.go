@@ -91,25 +91,18 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 
 	scheme, err = getURLScheme(url)
 	if err != nil {
-		err = fmt.Errorf("unable to get scheme of URL %s on %s; %w",
-			url,
-			method,
-			err)
+		err = fmt.Errorf("unable to get scheme of URL; %w", err)
 		goto end
 	}
 	logger.Logf("DEBUG: %s Scheme is %s", youarehere, scheme)
 
 	req, err = http.NewRequest(method, url, nil)
 	if err != nil {
-		err = fmt.Errorf("unable to instantiate %s %s request; %w",
-			scheme,
-			method,
-			err)
+		err = fmt.Errorf("unable to instantiate HTTP request; %w", err)
 		goto end
 	}
 	logger.Logf("DEBUG: %s Request is %#v", youarehere, req)
 
-	req.Close = true // Avoid failed calls that send EOF
 	req.Header = headers
 
 	if len(headers) == 0 {
@@ -117,19 +110,18 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 	} else {
 		logger.Logf("DEBUG: %s Headers are %#v", headers)
 	}
+	req.Close = true // Avoid failed calls that send EOF
 	resp, err = c.Do(req)
 	if err != nil {
-		err = fmt.Errorf("unable to perform %s %s request: %s",
-			scheme,
-			method,
-			err,
-		)
+		err = fmt.Errorf("unable to perform HTTP request; %w", err)
 	}
 	logger.Logf("DEBUG: %s Response is %#v", youarehere, resp)
 
 end:
 	if err != nil {
-		logger.Logf("ERROR: %s %s", youarehere, err.Error())
+		err = fmt.Errorf("%s unable to do %s %s; %w",
+			youarehere, scheme, method, err)
+		logger.Logf("ERROR: %s", err.Error())
 	}
 	return resp, err
 }
