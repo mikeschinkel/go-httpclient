@@ -112,7 +112,11 @@ func (c *Client) do(method, url string, headers http.Header, body interface{}) (
 	req.Close = true // Avoid failed calls that send EOF
 	req.Header = headers
 
-	logger.Logf("DEBUG: %s Headers are %#v", headers)
+	if len(headers) == 0 {
+		logger.Log("DEBUG: %s No headers provided")
+	} else {
+		logger.Logf("DEBUG: %s Headers are %#v", headers)
+	}
 	resp, err = c.Do(req)
 	if err != nil {
 		err = fmt.Errorf("unable to perform %s %s request: %s",
